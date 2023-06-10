@@ -5,7 +5,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-
+import { getFirestore, collection, addDoc } from "firebase/firestore";
 //
 import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
@@ -33,7 +33,7 @@ export default function Product({ catList }) {
     setOpen(false);
   };
 
-  const addProduct = () => {
+  const addProduct = async () => {
     if (
       productName.length > 0 &&
       discription.length > 0 &&
@@ -41,10 +41,16 @@ export default function Product({ catList }) {
       selectedCat.length > 0 &&
       inputimg
     ) {
+      const db = getFirestore();
+      const docRef = await addDoc(collection(db, "Product"), {
+        Name: productName,
+        Discription: discription,
+        Price: price,
+        Category: selectedCat,
+      });
+      console.log("Document written with ID: ", docRef.id);
       setinputError(false);
-      console.log("ok");
     } else {
-      console.log("no");
       setinputError(true);
     }
   };
