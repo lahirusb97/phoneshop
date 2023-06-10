@@ -5,7 +5,19 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  updateDoc,
+  doc,
+} from "firebase/firestore";
+import {
+  getStorage,
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+} from "firebase/storage";
 //
 import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
@@ -32,7 +44,50 @@ export default function Product({ catList }) {
   const handleClose = () => {
     setOpen(false);
   };
+  // const addProduct = async () => {
+  //   if (
+  //     productName.length > 0 &&
+  //     discription.length > 0 &&
+  //     price.length > 0 &&
+  //     selectedCat.length > 0 &&
+  //     inputimg
+  //   ) {
+  //     try {
+  //       const db = getFirestore();
+  //       const docRef = await addDoc(collection(db, "Product"), {
+  //         Name: productName,
+  //         Discription: discription,
+  //         Price: price,
+  //         Category: selectedCat,
+  //       });
 
+  //       const storage = getStorage();
+  //       const productStorageRef = storageRef(
+  //         storage,
+  //         `/product/${docRef.id}/${inputimg.name}`
+  //       );
+
+  //       // 'file' comes from the Blob or File API
+  //       const snapshot = await uploadBytes(productStorageRef, inputimg);
+
+  //       // Get the download URL
+  //       const downloadURL = await getDownloadURL(snapshot.ref);
+
+  //       // Update the document with the image URL
+  //       await updateDoc(doc(db, "Product", docRef.id), {
+  //         Img: downloadURL,
+  //       }).then(() => {
+  //         setOpen(false);
+  //       });
+
+  //       setinputError(false);
+  //     } catch (error) {
+  //       console.error("Error adding product:", error);
+  //     }
+  //   } else {
+  //     setinputError(true);
+  //   }
+  // };
   const addProduct = async () => {
     if (
       productName.length > 0 &&
@@ -41,15 +96,34 @@ export default function Product({ catList }) {
       selectedCat.length > 0 &&
       inputimg
     ) {
-      const db = getFirestore();
-      const docRef = await addDoc(collection(db, "Product"), {
-        Name: productName,
-        Discription: discription,
-        Price: price,
-        Category: selectedCat,
-      });
-      console.log("Document written with ID: ", docRef.id);
-      setinputError(false);
+      try {
+        const db = getFirestore();
+        const docRef = await addDoc(collection(db, "Product"), {
+          Name: productName,
+          Discription: discription,
+          Price: price,
+          Category: selectedCat,
+        });
+
+        const storage = getStorage();
+        const productStorageRef = storageRef(
+          storage,
+          `/product/${docRef.id}/${inputimg.name}`
+        );
+
+        const snapshot = await uploadBytes(productStorageRef, inputimg);
+
+        const downloadURL = await getDownloadURL(snapshot.ref);
+
+        await updateDoc(doc(db, "Product", docRef.id), {
+          Img: downloadURL,
+        });
+
+        setOpen(false);
+        setinputError(false);
+      } catch (error) {
+        console.error("Error adding product:", error);
+      }
     } else {
       setinputError(true);
     }
