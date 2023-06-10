@@ -24,8 +24,8 @@ export default function ManageCategory({ catList }) {
         </div>
         <h3 className="font-semibold text-lg text-gray-800">Category List</h3>
         <ul className="">
-          {catList.map((e) => (
-            <li className="flex items-center my-2">
+          {catList.map((e, i) => (
+            <li key={"cl" + i} className="flex items-center my-2">
               <button
                 onClick={() => removeCategory(e)}
                 className="p-2 bg-red-500 text-white mr-2"

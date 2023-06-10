@@ -22,7 +22,7 @@ export default function ProductManage() {
   return (
     <div>
       <ManageCategory catList={CategoryList} />
-      <Product />
+      <Product catList={CategoryList} />
     </div>
   );
 }
