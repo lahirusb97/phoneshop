@@ -11,35 +11,35 @@ import {
   where,
   getDoc,
   getDocs,
+  onSnapshot,
 } from "firebase/firestore";
+import ItemCard from "./ItemCard";
 export default function ProductList({ catList }) {
-  const [value, setValue] = useState("");
-  const [items, setItems] = useState({});
+  const [value, setValue] = useState(0);
+  const [items, setItems] = useState([]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-  useEffect(() => {
-    const newObject = Object.create(null);
-    catList.forEach((e) => {
-      newObject[e] = {};
-    });
-    setItems(newObject);
-  }, []);
 
   useEffect(() => {
-    const db = getFirestore();
-    const citiesRef = collection(db, "Product");
-    // Create a query against the collection.
-    const q = query(citiesRef, where("Category", "==", catList[value]));
-    const getItems = async () => {
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, " => ", doc.data());
+    if (catList.length > 0) {
+      const db = getFirestore();
+      const citiesRef = collection(db, "Product");
+      const q = query(citiesRef, where("Category", "==", catList[value]));
+
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const items = [];
+        querySnapshot.forEach((doc) => {
+          items.push(doc.data());
+          console.log(doc);
+        });
+        setItems(items);
       });
-    };
-    getItems();
+
+      // Cleanup the listener when the component unmounts or when the dependency value changes
+      return () => unsubscribe();
+    }
   }, [value]);
 
   return (
@@ -51,6 +51,7 @@ export default function ProductList({ catList }) {
           defaultValue="female"
           name="radio-buttons-group"
           onChange={(e) => setValue(e.target.value)}
+          style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}
         >
           {catList.map((e, i) => (
             <FormControlLabel
@@ -62,6 +63,11 @@ export default function ProductList({ catList }) {
           ))}
         </RadioGroup>
       </FormControl>
+      <div>
+        {items.map((e) => (
+          <ItemCard item={e} />
+        ))}
+      </div>
     </div>
   );
 }

@@ -83,6 +83,7 @@ export default function Product({ catList }) {
 
         await updateDoc(doc(db, "Product", docRef.id), {
           Img: downloadURL,
+          Id: docRef.id,
         });
 
         setOpen(false);
