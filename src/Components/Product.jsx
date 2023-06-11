@@ -26,13 +26,21 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 //
 export default function Product({ catList }) {
+  //dialog open switch
   const [open, setOpen] = useState(false);
+  //image input
   const [inputimg, setInputImg] = useState(null);
+  //product name
   const [productName, setProductName] = useState("");
+  //product discription
   const [discription, setDiscription] = useState("");
+  //product price
   const [price, setPrice] = useState("");
+  // cant leave imuts empty error display
   const [inputError, setinputError] = useState(false);
+  // only images can upload error display
   const [imgError, setImgError] = useState(false);
+  //get user selected listed product Category
   const [selectedCat, setSelectedCat] = useState("");
 
   const handleChange = (event) => {
@@ -44,50 +52,8 @@ export default function Product({ catList }) {
   const handleClose = () => {
     setOpen(false);
   };
-  // const addProduct = async () => {
-  //   if (
-  //     productName.length > 0 &&
-  //     discription.length > 0 &&
-  //     price.length > 0 &&
-  //     selectedCat.length > 0 &&
-  //     inputimg
-  //   ) {
-  //     try {
-  //       const db = getFirestore();
-  //       const docRef = await addDoc(collection(db, "Product"), {
-  //         Name: productName,
-  //         Discription: discription,
-  //         Price: price,
-  //         Category: selectedCat,
-  //       });
 
-  //       const storage = getStorage();
-  //       const productStorageRef = storageRef(
-  //         storage,
-  //         `/product/${docRef.id}/${inputimg.name}`
-  //       );
-
-  //       // 'file' comes from the Blob or File API
-  //       const snapshot = await uploadBytes(productStorageRef, inputimg);
-
-  //       // Get the download URL
-  //       const downloadURL = await getDownloadURL(snapshot.ref);
-
-  //       // Update the document with the image URL
-  //       await updateDoc(doc(db, "Product", docRef.id), {
-  //         Img: downloadURL,
-  //       }).then(() => {
-  //         setOpen(false);
-  //       });
-
-  //       setinputError(false);
-  //     } catch (error) {
-  //       console.error("Error adding product:", error);
-  //     }
-  //   } else {
-  //     setinputError(true);
-  //   }
-  // };
+  //  addProduct
   const addProduct = async () => {
     if (
       productName.length > 0 &&
@@ -128,7 +94,7 @@ export default function Product({ catList }) {
       setinputError(true);
     }
   };
-
+  //--------------------------------------
   return (
     <div>
       <div className="border-2 border-black m-2 p-2">

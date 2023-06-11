@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import ManageCategory from "../Components/ManageCategory";
 import Product from "../Components/Product";
 import { getFirestore, doc, onSnapshot } from "firebase/firestore";
+import ProductList from "../Components/ProductList";
 export default function ProductManage() {
   const [CategoryList, setCategoryList] = useState([]);
   useEffect(() => {
@@ -23,6 +24,7 @@ export default function ProductManage() {
     <div>
       <ManageCategory catList={CategoryList} />
       <Product catList={CategoryList} />
+      {CategoryList.length > 0 ? <ProductList catList={CategoryList} /> : <></>}
     </div>
   );
 }
