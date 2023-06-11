@@ -17,7 +17,7 @@ const Login = ({ setLoggedInUser }) => {
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
-        console.log(user);
+
         setLoggedInUser(user); // Pass the user data to the parent component
 
         navigate("/", { replace: true });

@@ -1,18 +1,50 @@
 import React from "react";
 import { TextField } from "@mui/material";
-import { getFirestore, doc, updateDoc, arrayRemove } from "firebase/firestore";
-
+import {
+  getFirestore,
+  doc,
+  updateDoc,
+  arrayRemove,
+  query,
+  collection,
+  where,
+  getDocs,
+} from "firebase/firestore";
+import { getStorage, ref, listAll, deleteObject } from "firebase/storage";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 export default function ManageCategory({ catList }) {
   const removeCategory = async (item) => {
     const db = getFirestore();
-    const documentRef = doc(db, "Category", "FMjKPsKH4uZQqnwqbPHf");
 
-    // Remove the item from the array using arrayRemove()
-    await updateDoc(documentRef, {
-      Category_list: arrayRemove(item),
-    });
+    const categoryRef = query(
+      collection(db, "Product"),
+      where("Category", "==", item)
+    );
+    const snapshot = await getDocs(categoryRef);
+    const count = snapshot.size;
+
+    if (count > 0) {
+      console.log("Value exists ");
+      toast.warn("Remove product before deleteing category", {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } else {
+      const documentRef = doc(db, "Category", "FMjKPsKH4uZQqnwqbPHf");
+
+      // Remove the item from the array using arrayRemove()
+      await updateDoc(documentRef, {
+        Category_list: arrayRemove(item),
+      });
+    }
   };
-
   return (
     <div>
       <div className="border-2 border-black m-2 p-2">
@@ -37,6 +69,18 @@ export default function ManageCategory({ catList }) {
           ))}
         </ul>
       </div>
+      <ToastContainer
+        position="bottom-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   );
 }

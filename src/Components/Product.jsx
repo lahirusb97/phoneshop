@@ -74,7 +74,7 @@ export default function Product({ catList }) {
         const storage = getStorage();
         const productStorageRef = storageRef(
           storage,
-          `/product/${docRef.id}/${inputimg.name}`
+          `/product/${selectedCat}/${docRef.id}/${inputimg.name}`
         );
 
         const snapshot = await uploadBytes(productStorageRef, inputimg);
@@ -175,12 +175,12 @@ export default function Product({ catList }) {
 
             <Box sx={{ minWidth: 120, paddingTop: "1rem" }}>
               <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Age</InputLabel>
+                <InputLabel id="demo-simple-select-label">Category</InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   value={selectedCat}
-                  label="Age"
+                  label="Category"
                   onChange={handleChange}
                 >
                   {catList.length > 0 ? (
