@@ -45,6 +45,35 @@ export default function ManageCategory({ catList }) {
       });
     }
   };
+  const addCategory = async () => {
+    const db = getFirestore();
+
+    const docRef = collection(db, "Category", "FMjKPsKH4uZQqnwqbPHf");
+
+    try {
+      const doc = await docRef.get();
+      if (doc.exists) {
+        // Get the current array
+        const dataArray = doc.data().yourArrayField || [];
+
+        // Check if the value already exists in the array
+        if (!dataArray.includes("New Data")) {
+          // Add the new data to the array
+          dataArray.push("New Data");
+
+          // Update the document with the modified array
+          await docRef.update({ yourArrayField: dataArray });
+          console.log("Data added to the array successfully!");
+        } else {
+          console.log("Value already exists in the array!");
+        }
+      } else {
+        console.log("Document does not exist!");
+      }
+    } catch (error) {
+      console.error("Error adding data to the array:", error);
+    }
+  };
   return (
     <div>
       <div className="border-2 border-black m-2 p-2">
@@ -52,7 +81,12 @@ export default function ManageCategory({ catList }) {
         <h3 className="font-semibold text-lg text-gray-800">Add Category</h3>
         <div className="flex my-2">
           <TextField label="Category Name" variant="outlined" />
-          <button className="p-4 bg-green-600 ml-2 text-white">Add</button>
+          <button
+            onClick={addCategory}
+            className="p-4 bg-green-600 ml-2 text-white"
+          >
+            Add
+          </button>
         </div>
         <h3 className="font-semibold text-lg text-gray-800">Category List</h3>
         <ul className="">
