@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { TextField } from "@mui/material";
 import {
   getFirestore,
@@ -9,11 +9,13 @@ import {
   collection,
   where,
   getDocs,
+  arrayUnion,
 } from "firebase/firestore";
 import { getStorage, ref, listAll, deleteObject } from "firebase/storage";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 export default function ManageCategory({ catList }) {
+  const [categoryName, setCategoryName] = useState("");
   const removeCategory = async (item) => {
     const db = getFirestore();
 
@@ -46,41 +48,40 @@ export default function ManageCategory({ catList }) {
     }
   };
   const addCategory = async () => {
-    const db = getFirestore();
+    const userInput = categoryName.toLowerCase();
+    if (catList.includes(userInput)) {
+      toast.error("Category you entered is alreay exist", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } else {
+      const db = getFirestore();
+      const docRef = doc(db, "Category", "FMjKPsKH4uZQqnwqbPHf");
 
-    const docRef = collection(db, "Category", "FMjKPsKH4uZQqnwqbPHf");
-
-    try {
-      const doc = await docRef.get();
-      if (doc.exists) {
-        // Get the current array
-        const dataArray = doc.data().yourArrayField || [];
-
-        // Check if the value already exists in the array
-        if (!dataArray.includes("New Data")) {
-          // Add the new data to the array
-          dataArray.push("New Data");
-
-          // Update the document with the modified array
-          await docRef.update({ yourArrayField: dataArray });
-          console.log("Data added to the array successfully!");
-        } else {
-          console.log("Value already exists in the array!");
-        }
-      } else {
-        console.log("Document does not exist!");
-      }
-    } catch (error) {
-      console.error("Error adding data to the array:", error);
+      // Update the array field using arrayUnion
+      await updateDoc(docRef, {
+        Category_list: arrayUnion(userInput),
+      });
     }
   };
+
   return (
     <div>
       <div className="border-2 border-black m-2 p-2">
         <h1 className="font-bold text-2xl text-blue-800">Manage Category</h1>
         <h3 className="font-semibold text-lg text-gray-800">Add Category</h3>
         <div className="flex my-2">
-          <TextField label="Category Name" variant="outlined" />
+          <TextField
+            label="Category Name"
+            onChange={(e) => setCategoryName(e.target.value)}
+            variant="outlined"
+          />
           <button
             onClick={addCategory}
             className="p-4 bg-green-600 ml-2 text-white"
@@ -104,7 +105,7 @@ export default function ManageCategory({ catList }) {
         </ul>
       </div>
       <ToastContainer
-        position="bottom-center"
+        position="top-center"
         autoClose={5000}
         hideProgressBar={false}
         newestOnTop={false}
