@@ -33,7 +33,6 @@ export default function ProductList({ catList }) {
         const items = [];
         querySnapshot.forEach((doc) => {
           items.push(doc.data());
-          console.log(doc);
         });
         setItems(items);
       });
@@ -44,7 +43,7 @@ export default function ProductList({ catList }) {
   }, [value]);
 
   return (
-    <div>
+    <div className="p-4">
       <FormControl>
         <FormLabel id="demo-radio-buttons-group-label">Category List</FormLabel>
         <RadioGroup
@@ -64,7 +63,7 @@ export default function ProductList({ catList }) {
           ))}
         </RadioGroup>
       </FormControl>
-      <div>
+      <div className="flex flex-wrap justify-center">
         {items.map((e, i) => (
           <div key={"items" + i}>
             <ItemCard catList={catList} item={e} />

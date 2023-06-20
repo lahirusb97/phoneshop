@@ -61,7 +61,7 @@ export default function ItemCard({ catList, item }) {
   const handleRemove = async () => {
     const db = getFirestore();
     const storage = getStorage();
-    const desertRef = ref(storage, item["Img"]);
+    const desertRef = storageRef(storage, item["Img"]);
     const removeDoc = async () => {
       await deleteDoc(doc(db, "Product", item["Id"]));
     };
@@ -123,7 +123,7 @@ export default function ItemCard({ catList, item }) {
 
   return (
     <div className="w-72 shadow-2xl m-4">
-      <img className="object-contain border-4" src={item["Img"]} />
+      <img className="object-contain border-4 w-64 m-auto" src={item["Img"]} />
 
       <h1 className="text-center font-semibold text-lg">{item["Name"]}</h1>
       <h2 className="text-center font-bold text-red-600">

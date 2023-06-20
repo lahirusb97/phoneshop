@@ -1,10 +1,12 @@
-import React, { useState } from "react";
-import { TextField, TextareaAutosize } from "@mui/material";
+import React, { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
+import { TextField } from "@mui/material";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import {
   getFirestore,
   collection,
@@ -18,22 +20,15 @@ import {
   uploadBytes,
   getDownloadURL,
 } from "firebase/storage";
-//
-import Box from "@mui/material/Box";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-//
-export default function Product({ catList }) {
+export default function OfferAdd({ dialogOpen, open }) {
   //dialog open switch
-  const [open, setOpen] = useState(false);
+
   //image input
   const [inputimg, setInputImg] = useState(null);
   //product name
   const [productName, setProductName] = useState("");
   //product discription
-  const [discription, setDiscription] = useState("");
+  const [precentage, setPrecentage] = useState("");
   //product price
   const [price, setPrice] = useState("");
   // cant leave imuts empty error display
@@ -41,79 +36,82 @@ export default function Product({ catList }) {
   // only images can upload error display
   const [imgError, setImgError] = useState(false);
   //get user selected listed product Category
-  const [selectedCat, setSelectedCat] = useState("");
 
-  const handleChange = (event) => {
-    setSelectedCat(event.target.value);
-  };
+  const [offerEndTime, setOfferEndTime] = useState(null);
+  useEffect(() => {
+    if (!open) {
+      setInputImg(null);
+      setProductName("");
+      setPrecentage("");
+      setPrice("");
+      setinputError(false);
+      setImgError(false);
+    }
+  }, [open]);
+
   const handleClickOpen = () => {
-    setOpen(true);
+    dialogOpen(true);
   };
   const handleClose = () => {
-    setOpen(false);
+    dialogOpen(false);
   };
 
-  //  addProduct
-  const addProduct = async () => {
+  const addOffer = async () => {
     if (
       productName.length > 0 &&
-      discription.length > 0 &&
+      precentage.length > 0 &&
       price.length > 0 &&
-      selectedCat.length > 0 &&
-      inputimg
+      inputimg &&
+      offerEndTime
     ) {
       try {
         const db = getFirestore();
-        const docRef = await addDoc(collection(db, "Product"), {
+        const docRef = await addDoc(collection(db, "offers"), {
           Name: productName,
-          Discription: discription,
-          Price: price,
-          Category: selectedCat,
+          Precentage: parseInt(precentage),
+          Price: parseInt(price),
+          End_date: offerEndTime,
         });
 
         const storage = getStorage();
         const productStorageRef = storageRef(
           storage,
-          `/product/${selectedCat}/${docRef.id}/${inputimg.name}`
+          `/offers/${docRef.id}/${inputimg.name}`
         );
 
         const snapshot = await uploadBytes(productStorageRef, inputimg);
 
         const downloadURL = await getDownloadURL(snapshot.ref);
 
-        await updateDoc(doc(db, "Product", docRef.id), {
+        await updateDoc(doc(db, "offers", docRef.id), {
           Img: downloadURL,
           Id: docRef.id,
         });
 
-        setOpen(false);
+        dialogOpen(false);
         setinputError(false);
       } catch (error) {
-        console.error("Error adding product:", error);
+        console.error("Error adding offers:", error);
       }
+
+      console.log("Offer added successfully!");
     } else {
-      setinputError(true);
+      // Show an error message or perform any necessary error handling
+      console.log(offerEndTime);
     }
   };
-  //--------------------------------------
   return (
     <div>
-      <div className="border-2 border-black m-2 p-2">
-        <h1 className="font-bold text-2xl text-blue-800">Manage Product</h1>
-        <button
-          onClick={handleClickOpen}
-          className="p-4 bg-green-600 text-white font-semibold text-lg my-2"
-        >
-          Add Product
-        </button>
-      </div>
       <Dialog
+        disableBackdropClick={false}
         open={open}
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{"Add Product"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">
+          {"Use Google's location service?"}
+        </DialogTitle>
         <DialogContent>
           <div className="m-2">
             <TextField
@@ -125,12 +123,8 @@ export default function Product({ catList }) {
               variant="outlined"
             />
 
-            <textarea
-              onChange={(e) => setDiscription(e.target.value)}
-              placeholder="Description"
-              className="w-full border p-3 border-gray-400 rounded-md my-2 h-24"
-            ></textarea>
             <TextField
+              style={{ margin: "1rem 0" }}
               onChange={(e) => setPrice(e.target.value)}
               className="w-full"
               id="outlined-basic"
@@ -138,6 +132,21 @@ export default function Product({ catList }) {
               type="number"
               variant="outlined"
             />
+            <TextField
+              onChange={(e) => setPrecentage(e.target.value)}
+              className="w-full "
+              id="outlined-basic"
+              label="Offer Percentage (%)"
+              type="number"
+              variant="outlined"
+              InputProps={{
+                endAdornment: "%",
+              }}
+            />
+            <span className="text-red-600 font-bold italic">
+              Item Price With Offer :
+              {price.length > 0 ? price - (price * precentage) / 100 : ""}
+            </span>
             <span className="block">Add Image</span>
             <span className="text-red-600 font-bold italic">
               {imgError ? "Invalid File Format" : ""}
@@ -170,36 +179,25 @@ export default function Product({ catList }) {
             ) : (
               <></>
             )}
-
-            <Box sx={{ minWidth: 120, paddingTop: "1rem" }}>
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Category</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={selectedCat}
-                  label="Category"
-                  onChange={handleChange}
-                >
-                  {catList.length > 0 ? (
-                    catList.map((e, i) => (
-                      <MenuItem key={"addp" + i} value={e}>
-                        {e}
-                      </MenuItem>
-                    ))
-                  ) : (
-                    <></>
-                  )}
-                </Select>
-              </FormControl>
-            </Box>
+            <div className="m-2">
+              {/* Existing code... */}
+              <DatePicker
+                selected={offerEndTime}
+                onChange={(date) => setOfferEndTime(date)}
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={15}
+                dateFormat="MM/dd/yyyy h:mm aa"
+                placeholderText="Select Offer End Date & Time"
+                className="w-full border-2 border-black p-2"
+              />
+              {/* Existing code... */}
+            </div>
           </div>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Close</Button>
-          <Button onClick={addProduct} autoFocus>
-            Add
-          </Button>
+          <Button onClick={addOffer}>Add</Button>
         </DialogActions>
       </Dialog>
     </div>

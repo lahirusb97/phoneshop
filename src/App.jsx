@@ -5,6 +5,7 @@ import Login from "./Pages/Login";
 import Home from "./Pages/Home";
 
 function App() {
+  //handle login or not
   const [loggedInUser, setLoggedInUser] = useState(null);
 
   return (

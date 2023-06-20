@@ -13,6 +13,7 @@ import {
 } from "firebase/firestore";
 import { getStorage, ref, listAll, deleteObject } from "firebase/storage";
 import { ToastContainer, toast } from "react-toastify";
+import del from "../assets/delete.svg";
 import "react-toastify/dist/ReactToastify.css";
 export default function ManageCategory({ catList }) {
   const [categoryName, setCategoryName] = useState("");
@@ -95,11 +96,11 @@ export default function ManageCategory({ catList }) {
             <li key={"cl" + i} className="flex items-center my-2">
               <button
                 onClick={() => removeCategory(e)}
-                className="p-2 bg-red-500 text-white mr-2"
+                className=" bg-red-500 text-white mr-2"
               >
-                Remove
+                <img src={del} />
               </button>
-              <h6 className="font-semibold ">{e}</h6>
+              <h6 className="font-semibold capitalize">{e}</h6>
             </li>
           ))}
         </ul>
