@@ -7,6 +7,7 @@ import {
   addDoc,
   updateDoc,
 } from "firebase/firestore";
+import LazyLoad from "react-lazyload";
 
 import {
   getStorage,
@@ -77,11 +78,14 @@ const OfferComponent = ({ itemData }) => {
   return (
     <div className="w-72 p-4 bg-gray-800 rounded-2xl shadow-lg">
       <div className="relative">
-        <img
-          className="object-contain bg-center w-72 h-40 rounded-t-xl"
-          src={itemData.Img}
-          alt="Product"
-        />
+        <LazyLoad height={200}>
+          <img
+            className="object-contain bg-center w-72 h-40 rounded-t-xl"
+            src={itemData.Img}
+            alt="Product"
+          />
+        </LazyLoad>
+
         <div className="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded">
           {itemData["Precentage"]}% off
         </div>

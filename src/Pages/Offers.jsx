@@ -23,7 +23,6 @@ export default function Offers() {
         const items = [];
 
         snapshot.forEach((doc) => {
-          console.log(doc.data());
           items.push(doc.data());
         });
         setItems(items);

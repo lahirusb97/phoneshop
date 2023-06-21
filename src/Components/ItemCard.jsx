@@ -7,6 +7,7 @@ import {
   addDoc,
   updateDoc,
 } from "firebase/firestore";
+import LazyLoad from "react-lazyload";
 
 import {
   getStorage,
@@ -123,7 +124,12 @@ export default function ItemCard({ catList, item }) {
 
   return (
     <div className="w-72 shadow-2xl m-4">
-      <img className="object-contain border-4 w-64 m-auto" src={item["Img"]} />
+      <LazyLoad height={200}>
+        <img
+          className="object-contain border-4 w-64 m-auto"
+          src={item["Img"]}
+        />
+      </LazyLoad>
 
       <h1 className="text-center font-semibold text-lg">{item["Name"]}</h1>
       <h2 className="text-center font-bold text-red-600">

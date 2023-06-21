@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Routes, Route } from "react-router-dom";
-import Orders from "./Orders";
+import Orders from "../Components/Orders";
 import ProductManage from "./ProductManage";
 import { Link } from "react-router-dom";
 import Offers from "./Offers";
+import Messages from "./Messages";
 export default function Home() {
   const [curentRoute, setCurrentRoute] = useState("order");
   return (
@@ -46,6 +47,17 @@ export default function Home() {
               <></>
             )}
           </li>
+          <li
+            onClick={() => setCurrentRoute("message")}
+            className={"text-lg font-semibold mr-6 relative"}
+          >
+            <Link to="/message">Messages</Link>
+            {curentRoute === "message" ? (
+              <span className="absolute -bottom-1 left-0 w-full h-1 bg-white mt-2"></span>
+            ) : (
+              <></>
+            )}
+          </li>
         </ul>
       </nav>
 
@@ -54,6 +66,7 @@ export default function Home() {
         <Route path="/product" element={<ProductManage />} />
         <Route path="/offers" element={<Offers />} />
         <Route path="/order" element={<Orders />} />
+        <Route path="/message" element={<Messages />} />
       </Routes>
     </div>
   );
