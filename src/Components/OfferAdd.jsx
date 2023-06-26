@@ -109,9 +109,7 @@ export default function OfferAdd({ dialogOpen, open }) {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">
-          {"Use Google's location service?"}
-        </DialogTitle>
+        <DialogTitle id="alert-dialog-title">{"Add Offer"}</DialogTitle>
         <DialogContent>
           <div className="m-2">
             <TextField
