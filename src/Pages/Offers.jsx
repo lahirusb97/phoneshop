@@ -14,6 +14,7 @@ export default function Offers() {
   const openAddItem = (data) => {
     setOpen(data);
   };
+
   useEffect(() => {
     const offerList = () => {
       const db = getFirestore();

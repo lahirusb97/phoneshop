@@ -30,24 +30,24 @@ import {
   FormControl,
 } from "@mui/material";
 
-export default function ItemCard({ catList, item }) {
+export default function ItemCard({ catList, item, val }) {
   //HANDLE EDIT POP UP
   //dialog open switch
   const [open, setOpen] = useState(false);
   //image input
   const [inputimg, setInputImg] = useState(null);
   //product name
-  const [productName, setProductName] = useState(item["Name"]);
+  const [productName, setProductName] = useState("");
   //product discription
-  const [discription, setDiscription] = useState(item["Discription"]);
+  const [discription, setDiscription] = useState("");
   //product price
-  const [price, setPrice] = useState(item["Price"]);
+  const [price, setPrice] = useState("");
   // cant leave imuts empty error display
   const [inputError, setinputError] = useState(false);
   // only images can upload error display
   const [imgError, setImgError] = useState(false);
   //get user selected listed product Category
-  const [selectedCat, setSelectedCat] = useState(item["Category"]);
+  const [selectedCat, setSelectedCat] = useState("");
   const handleChange = (event) => {
     setSelectedCat(event.target.value);
   };

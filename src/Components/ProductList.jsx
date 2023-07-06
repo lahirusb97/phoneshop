@@ -18,7 +18,7 @@ import ItemCard from "./ItemCard";
 export default function ProductList({ catList }) {
   const [value, setValue] = useState(0);
   const [items, setItems] = useState([]);
-
+  const [open, setOpen] = useState(false);
   // const handleChange = (event, newValue) => {
   //   setValue(newValue);
   // };
@@ -40,7 +40,7 @@ export default function ProductList({ catList }) {
       // Cleanup the listener when the value changes
       return () => unsubscribe();
     }
-  }, [value]);
+  }, [value, open]);
 
   return (
     <div className="p-4">
@@ -66,7 +66,7 @@ export default function ProductList({ catList }) {
       <div className="flex flex-wrap justify-center">
         {items.map((e, i) => (
           <div key={"items" + i}>
-            <ItemCard catList={catList} item={e} />
+            <ItemCard catList={catList} item={e} val={value} />
           </div>
         ))}
       </div>
