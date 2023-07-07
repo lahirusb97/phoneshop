@@ -28,7 +28,10 @@ export default function Orders() {
       </h1>
       <div className=" flex flex-wrap">
         {orderMsg.map((e) => (
-          <div>{/* <OrderMessageBox data={e} /> */}</div>
+          <div>
+            {" "}
+            <OrderMessageBox data={e} />
+          </div>
         ))}
       </div>
     </div>
